@@ -1,0 +1,127 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.video-url-container {
+    position: relative;
+    display: flex;
+    width: 100%;
+}
+
+.video-url-container > span {
+    white-space: nowrap;
+    display: block;
+    text-align: center;
+    padding: 8px 12px;
+    font-size: 14px;
+    line-height: 25px;
+    color: #99A3BA;
+    background: #EEF4FF;
+    border: 1px solid #CDD9ED;
+    transition: background .3s ease, border .3s ease, color .3s ease;
+    border-radius: 6px 0 0 6px;
+}
+
+#video-url-input {
+    white-space: nowrap;
+    display: block;
+    position: relative;
+    z-index: 1;
+    flex: 1 1 auto;
+    width: 1%;
+    margin-top: 0;
+    margin-bottom: 0;
+    display: block;
+    width: 100%;
+    padding: 8px 16px;
+    line-height: 25px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: inherit;
+    -webkit-appearance: none;
+    color: #99A3BA;
+    border: 1px solid #CDD9ED;
+    background: #fff;
+    transition: border .3s ease;
+
+}
+
+#upload-btn {
+    display: block;
+    text-align: center;
+    padding: 8px 12px;
+    font-size: 14px;
+    line-height: 25px;
+    color: white;
+    background: #678EFE;
+    border: 1px solid #CDD9ED;
+    transition: background .3s ease, border .3s ease, color .3s ease;
+    border-radius: 0 6px 6px 0;
+}
+
+#upload-btn:hover {
+    border-color: #275EFE;
+    color: white;
+    background: #275EFE;
+} 
+
+.video-url-container:focus-within .dec {
+    color: white;
+    background: #678EFE;
+    border-color: #275EFE;
+} 
+
+
+#video-url-input:focus {
+    outline: none;
+    border-color: #275EFE;
+}
+
+#video-url-input::placeholder {
+    color: #CBD1DC;
+}
+
+#left, #right {
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 50px;
+    opacity: 0.8;
+    transition: all .2s linear;
+}
+
+#left:hover, #right:hover {
+    opacity: 1;
+}
+
+#related-videos {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+
+.video-more {
+    width: 33%;
+    border: 1px solid black;
+    border-radius: 2px;
+    padding: 10px 5px;
+    margin-top: 5px;
+}
+
+
+#search-field {
+    text-align: center;
+}
+
+.head-mark {
+    font-size: 20px;
+}
+#current-phrase {
+    border: 1px black solid;
+}
+
+textarea {
+    padding: 10px;
+}
