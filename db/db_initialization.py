@@ -23,9 +23,9 @@ def create_update_tsv(connection, cursor):
     print("Created automatic text search vector builder function")
 
 
-def init_tables(connection, cursor):
+def init_table_asr(connection, cursor):
     """
-    Clearing up the table, and recreating them from scratch. Creating tsvector column,
+    Clearing up the ASR table, and recreating them from scratch. Creating tsvector column,
     and indexing by it. Making automatic tsv from textual data on insert
     """
     # Creating asr table:
@@ -47,7 +47,7 @@ def init_tables(connection, cursor):
     # Execute a command: this creates a new table
     cursor.execute(create_table_query)
     connection.commit()
-    print("\nTable created successfully in PostgreSQL ")
+    print("\nTable ASR created successfully in PostgreSQL ")
 
     create_update_tsv(connection, cursor)
     create_index = """
@@ -62,5 +62,49 @@ def init_tables(connection, cursor):
     cursor.execute(create_index)
     cursor.execute(create_tsv_trigger)
     connection.commit()
-    print("Successfully created trigger, indexed and automized the creation of tsv!!!\n\n")
+    print("Successfully created ASR trigger, indexed and automized the creation of tsv!!!\n\n")
+
+
+def init_table_ocr(connection, cursor):
+    """
+    Clearing up the OCR table, and recreating them from scratch. Creating tsvector column,
+    and indexing by it. Making automatic tsv from textual data on insert
+    """
+    # Creating ocr table:
+    create_table_query = """
+    DROP TABLE IF EXISTS ocr;
+    CREATE TABLE ocr
+    (
+        vidos_id INT NOT NULL PRIMARY KEY,
+        path TEXT NOT NULL,
+        title TEXT NOT NULL,
+        client_id INT,
+        time_added timestamp NOT NULL,
+        body TEXT NOT NULL,
+        timestamps TEXT[] NOT NULL,
+        text_as_array TEXT[] NOT NULL,
+        tsv tsvector NOT NULL
+    );
+"""
+    # Execute a command: this creates a new table
+    cursor.execute(create_table_query)
+    connection.commit()
+    print("\nTable OCR created successfully in PostgreSQL ")
+
+    create_update_tsv(connection, cursor)
+    create_index = """
+    CREATE INDEX ocr_index
+        ON ocr USING gin (tsv);
+    """
+    create_tsv_trigger = """
+    CREATE TRIGGER update_tsv
+       BEFORE INSERT OR UPDATE ON ocr
+       FOR EACH ROW EXECUTE PROCEDURE update_tsv();
+    """
+    cursor.execute(create_index)
+    cursor.execute(create_tsv_trigger)
+    connection.commit()
+    print("Successfully created OCR trigger, indexed and automized the creation of tsv!!!\n\n")
+
+
 
