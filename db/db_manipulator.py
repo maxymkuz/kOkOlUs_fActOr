@@ -1,4 +1,6 @@
 import datetime
+
+
 # from db.db_initialization import init_tables
 # from db.connection import connect_to_db, disconnect
 # item_purchase_time = datetime.datetime.now()
@@ -9,16 +11,34 @@ import datetime
 # CREATE DATABASE postgres_db;
 
 
-def insert_acs(connection, cursor, vidos_id, path, title, body, client_id=0):
+def insert_acs(connection, cursor, vidos_id, path, title, words_lst, timestamp_lst, client_id=0):
+    """
+    Прочитай уважно шо подається
+
+    :param vidos_id: УНІКАЛЬНИЙ ДЛЯ КОЖНОГО ВІДОСУ, ЗАДАЄТЬСЯ ВРУЧНУ
+    :param path: то має бути юрлка на ютуб напирклад
+    :param title: посплітена назва відосу як я в тг вчора писав
+    :param words_lst:        ["word1", "word2", "word3", "word4"]
+    :param timestamp_lst:    ["timestamp1", "timestamp2", "timestamp3", "timestamp4"]
+    :param client_id:    забий хуй і нич не передавай
+    :return:
+    """
     insrt_stmt = """
     INSERT INTO asr 
-        (vidos_id, path, title, client_id, time_added, body)
+        (vidos_id, path, title, client_id, time_added, body, timestamps, text_as_array)
     VALUES
-        (%s, %s, %s, %s, %s, %s)
+        (%s, %s, %s, %s, %s, %s, %s, %s)
     """
-    cursor.execute(insrt_stmt, [vidos_id, path, title, client_id,
-                                datetime.datetime.now(), body])
-    connection.commit()
+    try:
+        cursor.execute(insrt_stmt, [vidos_id, path, title, client_id,
+                                    datetime.datetime.now(), " ".join(words_lst),
+                                    timestamp_lst, words_lst
+                                    ])
+        connection.commit()
+        print(f"Successfully added {title} to the DB!")
+
+    except:
+        print(f"Was not able to insert video {title}, Probably wrong input")
 
 
 def search_asr(connection, cursor, query):
@@ -31,6 +51,8 @@ def search_asr(connection, cursor, query):
                      to_tsquery(%s),
                      'StartSel=*,StopSel=*,MaxFragments=2,' ||
                      'FragmentDelimiter=...,MaxWords=15,MinWords=1') AS "headline",
+        timestamps,
+        text_as_array,
         tsv
     FROM
         asr
@@ -41,14 +63,8 @@ def search_asr(connection, cursor, query):
     cursor.execute(search_stmt, [query, query, query])
     return cursor.fetchall()
 
-
 # if __name__ == '__main__':
 #     connection, cursor = connect_to_db()
-#     init_tables(connection, cursor)
-#     insert_acs(connection, cursor, 0, "_", "second one",
-#                "To start, we will create a file called base.py in the main directory of our project and add the following code to it:")
-#     insert_acs(connection, cursor, 2, "_", "first one",
-#                "To start, we will create a file called base.py in the main. Our starting position directory of our project and add the following code to it:")
 #     for i in search_asr(connection, cursor, "start"):
 #         print(i)
 #     disconnect(connection, cursor)

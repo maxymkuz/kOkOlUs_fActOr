@@ -39,6 +39,8 @@ def init_tables(connection, cursor):
         client_id INT,
         time_added timestamp NOT NULL,
         body TEXT NOT NULL,
+        timestamps TEXT[] NOT NULL,
+        text_as_array TEXT[] NOT NULL,
         tsv tsvector NOT NULL
     );
 """
