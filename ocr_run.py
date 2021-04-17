@@ -30,21 +30,23 @@ def extract_video_id(url):
 
 def get_data(src, language=['en']):
     ocr = OCR_Saver(language)
-    result_ocr, timestamp_ocr = ocr(src, to_print=True)
+    result_ocr, timestamp_ocr = ocr(src, to_print=False)
     return result_ocr, timestamp_ocr
 
 
-def get_video(url, save_folder='jsons/'):
+def get_video(url):
     youtube = pytube.YouTube(url)
     video = youtube.streams.first()
     regex = re.compile('[%s]' % re.escape(string.punctuation))
     title = regex.sub('', video.title)
     ids = extract_video_id(url)
+    print("START DOWNLOADING")
     video.download(f'tmp', filename=title)
     print(title)
     src = 'tmp/' + title + '.mp4'
     result_ocr, timestamp_ocr = get_data(src)
     os.remove(src)
+
     return {
         'id': ids,
         'title': title,
@@ -56,8 +58,32 @@ def get_video(url, save_folder='jsons/'):
 
 videos = [
     'https://www.youtube.com/watch?v=Z3Wvw6BivVI',
+    'https://www.youtube.com/watch?v=Yocja_N5s1I&t=1s',
+    'https://www.youtube.com/watch?v=TG55ErfdaeY',
+    'https://www.youtube.com/watch?v=KTB_OFoAQcc',
+    'https://www.youtube.com/watch?v=spUNpyF58BY',
+    'https://www.youtube.com/watch?v=K3odScka55A',
+    'https://www.youtube.com/watch?v=wEoyxE0GP2M&t=2s',
+    'https://www.youtube.com/watch?v=LFKZLXVO-Dg',
+
+    'https://www.youtube.com/watch?v=Uj3_KqkI9Zo',
+    'https://www.youtube.com/watch?v=V0CdS128-q4',
+    'https://www.youtube.com/watch?v=vplFSx4WVeg',
+    'https://www.youtube.com/watch?v=eNkvmj_SWTk',
+    'https://www.youtube.com/watch?v=T98PIp4omUA',
+    'https://www.youtube.com/watch?v=ktWL3nN38ZA',
+    'https://www.youtube.com/watch?v=RT-hUXUWQ2I',
+    'https://www.youtube.com/watch?v=AI6Ccfno6Pk',
+    'https://www.youtube.com/watch?v=aCPkszeKRa4',
+
+
 ]
+main_dct = {}
 for i in range(len(videos)):
     dct = get_video(videos[i])
+    main_dct[dct['id']] = dct
     with open(f'jsons/{i}.json', 'w') as f:
         json.dump(dct, f)
+
+with open(f'jsons/main.json', 'w') as f:
+    json.dump(main_dct, f)

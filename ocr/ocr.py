@@ -64,14 +64,15 @@ class OCR_Saver:
                 current_frame += 1
                 continue
             current_frame += 1
-            if to_print and current_frame % (length // 100) < 5 * fps:
-                print(str(q) + '%', current_frame)
+            if current_frame % (length // 10) < 5 * fps:
+                print(current_frame // (length // 10) * 10 ,'%', current_frame)
                 q += 1
             if miss_frames and current_frame > fps:
                 if ssim_loss(torch.tensor(np.transpose(image)[np.newaxis, :, :, :]).type(torch.FloatTensor),
                              prev_image,
                              window_size=11) < 0.05:
-                    print("Miss")
+                    if to_print:
+                        print("Miss")
                     continue
             name = 'tmp/' + str(current_frame) + '.jpg'
             cv2.imwrite(name, image)
@@ -81,10 +82,13 @@ class OCR_Saver:
                 for x in i[0].split():
                     text.append(x)
                     time.append(current_frame // fps)
+                    if to_print:
+                        print(x)
             os.remove(name)
             prev_image = torch.tensor(np.transpose(image)[np.newaxis, :, :, :].copy()).type(torch.FloatTensor)
         return text, time
 
+if __name__ == '__main__':
 
-ocr = OCR_Saver()
-ocr('/home/fedynyak/hack/lecture_test.mp4')
+    ocr = OCR_Saver()
+    ocr('/home/fedynyak/hack/lecture_test.mp4')
