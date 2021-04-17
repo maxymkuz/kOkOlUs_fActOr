@@ -1,4 +1,5 @@
-const canva = document.getElementById('graph');
+const ASRcanva = document.getElementById('ASRgraph');
+const OCRcanva = document.getElementById("OCRgraph");
 
 
 const data = {
@@ -14,14 +15,15 @@ const data = {
 
 const config = {
     type: 'line',
-    data,
+    data: {...data},
     options: {}
   };
 
-var chart = new Chart(canva, config);
 
+var ASRchart = new Chart(ASRcanva, config);
+var OCRchart = new Chart(OCRcanva, config);
 
-function updateGraph(label, data, title) {
+function updateGraph(label, data, title, chart) {
     // console.log(label)
     // console.log(data)
     chart.data.labels = label;
@@ -35,16 +37,16 @@ function updateGraph(label, data, title) {
 }
 
 
-function clickHandler(evt) {
+function clickHandler(evt, chart) {
     var firstPoint = chart.getElementAtEvent(evt)[0];
     if (firstPoint) {
         var label = chart.data.labels[firstPoint._index];
-        var value = chart.data.datasets[firstPoint._datasetIndex].data[firstPoint._index];
-        move
+        player.seekTo(label);
     }
 }
 
-canva.onclick = clickHandler;
+ASRcanva.onclick = (e) => {clickHandler(e, ASRchart)};
+OCRcanva.onclick = (e) => {clickHandler(e, OCRchart)};
 
 // function removeData() {
 //     chart.data.labels.pop();

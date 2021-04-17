@@ -7,6 +7,10 @@ const relatedVideosContainer = document.getElementById("related-videos")
 const currQueryDOM = document.getElementById("current-phrase")
 const uploadBtn = document.getElementById("upload-btn")
 const currentVideoUrlDOM = document.getElementById("video-url-input")
+const ASRDOM = document.getElementById("ASR")
+const OCRDOM = document.getElementById("OCR")
+
+
 let currentVideoId;
 let currentQuery;
 let currentTimestamps = [];
@@ -43,13 +47,10 @@ function displayVideo(id) {
     currentVideoId = id;
     player.cueVideoById({"videoId": id}); //cueVideoById
     // currentTimestamps = await getTimeStamps(id, currentQuery);
-    currentTimestamps = [23, 56, 200, 320];
-    currentTimeStampIndex = 0;
-    moveToMark();
+    searchBtn.click();
 }
 
 function moveToMark() {
-    console.log("Time stamp index: ", currentTimeStampIndex);
     if (currentTimestamps.length) {
         console.log(currentTimestamps[currentTimeStampIndex % currentTimestamps.length]);
         player.seekTo(currentTimestamps[currentTimeStampIndex % currentTimestamps.length]);
@@ -60,22 +61,50 @@ function moveToMark() {
     }
 }
 
+// function moveToMarkValue(value) {
+//     currentTimestamps.forEach((val, ind) => {
+//         if (value == val) {
+//             currentTimeStampIndex = ind;
+//         }
+//     })
+//     moveToMark();
+// }
+
 viewBtn.addEventListener("click", () => {
     currentQuery = queryText.value;
     console.log("Current Query:", currentQuery);
     // relevantVideos = await getRelevantVideos(currentQuery);
-    relevantVideos = [{"name": "Suka", "id": "iHEMOdRo5u"}, {"name": "Vasya", "id": "HgzGwKwLmgM"}];
+    relevantVideos = [{"name": "Suka", "id": "spUNpyF58BY"}, {"name": "Vasya", "id": "HgzGwKwLmgM"}];
     displayRelevantVideos(relevantVideos);
 })
 
 searchBtn.addEventListener("click", () => {
     currentQuery = queryText.value;
     currQueryDOM.innerHTML = currentQuery;
-    // result = await getTimeStamps(currentVideoId, currentQuery);
-    currentTimestamps = [23, 56, 200, 320];
+    console.log("g");
+    // let ocrResult = await getTimeStamps(currentVideoId, currentQuery, "ocr");
+    // let asrResult = await getTimeStamps(currentVideoId, currentQuery, "asr");
+    
+    // let ocrTimeStamps = ocrResult.map(el => el.timestamp);
+    // let asrTimeStamps = asrResult.map(el => el.timestamp);
+    // let ocrLabels = ocrResult.map(el => el.prob);
+    // let asrLabels = asrResult.map(el => el.prob);
+    let ocrTimeStamps = [23, 56, 200, 320];
+    let asrTimeStamps = ocrTimeStamps;
+    let ocrLabels = [0.3, 0.35, 0.5, 0.95];
+    let asrLabels = ocrTimeStamps;
     currentTimeStampIndex = 0;
+
+    updateGraph(ocrTimeStamps, ocrLabels, "OCRChart", OCRchart); // map from it
+    updateGraph(asrTimeStamps, asrLabels, "ASRChart", ASRchart); // map from it
+    currentTimestamps = []
+    if (OCRDOM.checked) {
+        currentTimestamps = currentTimestamps.concat(ocrTimeStamps);
+    } 
+    if (ASRDOM.checked) {
+        currentTimestamps = currentTimestamps.concat(asrTimeStamps);
+    }
     moveToMark();
-    updateGraph(currentTimestamps, [0.3, 0.4, 0.67, 0.8], "New chlen"); // map from it
 })
 
 prev.addEventListener("click", () => {

@@ -116,12 +116,12 @@
 }
 
 .head-mark {
-    font-size: 20px;
+    font-size: 17px;
 }
 #current-phrase {
     border: 1px black solid;
 }
 
 textarea {
-    padding: 10px;
+    padding: 5px;
 }
