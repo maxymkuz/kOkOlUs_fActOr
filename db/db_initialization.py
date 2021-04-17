@@ -33,8 +33,7 @@ def init_table_asr(connection, cursor):
     DROP TABLE IF EXISTS asr;
     CREATE TABLE asr
     (
-        vidos_id INT NOT NULL PRIMARY KEY,
-        path TEXT NOT NULL,
+        video_id TEXT NOT NULL,
         title TEXT NOT NULL,
         client_id INT,
         time_added timestamp NOT NULL,
@@ -75,8 +74,7 @@ def init_table_ocr(connection, cursor):
     DROP TABLE IF EXISTS ocr;
     CREATE TABLE ocr
     (
-        vidos_id INT NOT NULL PRIMARY KEY,
-        path TEXT NOT NULL,
+        video_id TEXT NOT NULL,
         title TEXT NOT NULL,
         client_id INT,
         time_added timestamp NOT NULL,

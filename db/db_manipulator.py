@@ -12,14 +12,13 @@ from psycopg2 import sql
 # CREATE DATABASE postgres_db;
 
 
-def insert_db(connection, cursor, vidos_id, path, title, words_lst, timestamp_lst, db="asr",
+def insert_db(connection, cursor, video_id, title, words_lst, timestamp_lst, db="asr",
               client_id=0):
     """
     Прочитай уважно шо подається
 
     :param db: "asr" or "ocr"
-    :param vidos_id: УНІКАЛЬНИЙ ДЛЯ КОЖНОГО ВІДОСУ, ЗАДАЄТЬСЯ ВРУЧНУ
-    :param path: то має бути юрлка на ютуб напирклад
+    :param video_id: то має бути юрлка на ютуб напирклад
     :param title: посплітена назва відосу як я в тг вчора писав
     :param words_lst:        ["word1", "word2", "word3", "word4"]
     :param timestamp_lst:    ["timestamp1", "timestamp2", "timestamp3", "timestamp4"]
@@ -28,19 +27,20 @@ def insert_db(connection, cursor, vidos_id, path, title, words_lst, timestamp_ls
     """
     insrt_stmt = """
     INSERT INTO {} 
-        (vidos_id, path, title, client_id, time_added, body, timestamps, text_as_array)
+        (video_id, title, client_id, time_added, body, timestamps, text_as_array)
     VALUES
-        (%s, %s, %s, %s, %s, %s, %s, %s)
+        (%s, %s, %s, %s, %s, %s, %s)
     """
+
     try:
         cursor.execute(sql.SQL(insrt_stmt).format(sql.Identifier(db)),
                        [
-                           vidos_id, path, title, client_id,
+                           video_id, title, client_id,
                            datetime.datetime.now(), " ".join(words_lst),
                            timestamp_lst, words_lst
                        ])
         connection.commit()
-        print(f"Successfully added {title} to the DB!")
+        print(f"Successfully added {title} to the {db} DB!")
     except:
         print(f"Was not able to insert video {title}, Probably wrong input")
 
@@ -49,7 +49,7 @@ def search_db(connection, cursor, query, db="asr", language="'english'"):
     search_stmt = f"""
     SELECT
         ts_rank("tsv", to_tsquery({language}, %s)) AS "rank",
-        path,
+        video_id,
         title,
         ts_headline(body,
                      to_tsquery({language}, %s),
