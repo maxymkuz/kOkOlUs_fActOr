@@ -2,8 +2,8 @@ import os
 from ocr.ocr import OCR_Saver
 import os
 import pytube
-
-
+import re
+import string
 def get_data(src, language=['en']):
     ocr = OCR_Saver(language)
     result_ocr, timestamp_ocr = ocr(src, to_print=True)
@@ -13,9 +13,10 @@ def get_data(src, language=['en']):
 def get_video(url):
     youtube = pytube.YouTube(url)
     video = youtube.streams.first()
-    print(video.title)
-    video.download('tmp/')
-    title = video.title
+    regex = re.compile('[%s]' % re.escape(string.punctuation))
+    title = regex.sub('',video.title.replace(' ', ''))
+    video.download(f'tmp',filename=title)
+    print(title)
     src = 'tmp/' + title + '.mp4'
     result_ocr, timestamp_ocr, result_asr, timestamp_asr = get_data(src)
     os.remove(src)
@@ -32,4 +33,4 @@ def get_video(url):
     }]
 
 
-get_video('https://www.youtube.com/watch?v=vT1JzLTH4G4')
+get_video('https://www.youtube.com/watch?v=Ilg3gGewQ5U')
