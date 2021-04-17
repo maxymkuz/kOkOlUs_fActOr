@@ -42,32 +42,28 @@ def get_timestamp():
         return json.dumps({"response": "Input is not a json"}), 400
     # Parsing input json
     content = request.get_json()
-    print("HUI", content)
+    print(content)
 
-    try:
-        # Retrieving text field from json
-        query = content["query"]
-        id = content["id"]
-        db = content["db"]
-        print(query)
-        res = find_db(connection, cursor, query, db=db)
-        print("____", res)
-        volodya_dick = []
+    # try:
+    # Retrieving text field from json
+    query = content["query"]
+    id = content["id"]
+    db = content["db"]
+    res = find_db(connection, cursor, query, db=db)
 
-        print(id, res)
+    print(1488, res)
+    volodya_dick = []
 
-        for i in res:
-            if i[1] == id:
-                volodya_dick = i[3]
-                break
-        print(volodya_dick)
+    for i in res:
+        if i[1] == id:
+            volodya_dick = i[3]
+            break
+    print(volodya_dick)
 
-        total = [log(x + 1e-20) for x in get_total_pdf(volodya_dick, 600)]
-        x = get_top_n(total, 600, 10)
-        ret = [{"timestamp": i[0], "prob": i[1]} for i in x]
-        return json.dumps(ret)
-    except:
-        return json.dumps([{"timestamp": 0, "prob": 0}])
+    total = [x for x in get_total_pdf(volodya_dick, 600)]
+    x = sorted(get_top_n(total, 600, 10), key=lambda x: x[0])
+    ret = [{"timestamp": max(i[0] - 2, 0), "prob": i[1]} for i in x]
+    return json.dumps(ret)
 
 
 if __name__ == "__main__":

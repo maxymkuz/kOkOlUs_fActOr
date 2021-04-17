@@ -11,7 +11,7 @@ const ASRDOM = document.getElementById("ASR")
 const OCRDOM = document.getElementById("OCR")
 
 
-let currentVideoId;
+let currentVideoId = "wEoyxE0GP2M";
 let currentQuery;
 let currentTimestamps = [];
 let relevantVideos = [];
@@ -34,8 +34,8 @@ function displayRelevantVideos(videoList) {
     }
 
     // bring the first one onto placeholder
-    if (relatedVideosContainer.length) {
-        displayVideo(videoList[0]);
+    if (videoList.length) {
+        displayVideo(videoList[0].id);
     }
 }
 
@@ -81,38 +81,41 @@ viewBtn.addEventListener("click", () => {
     // displayRelevantVideos(relevantVideos);
 })
 
+async function processStamps() {
+    let ocrResult = await getTimeStamps(currentVideoId, currentQuery, "ocr");
+    let asrResult = await getTimeStamps(currentVideoId, currentQuery, "asr");
+    let ocrTimeStamps = ocrResult.map(el => el.timestamp);
+    let ocrLabels = ocrResult.map(el => el.prob);
+    let asrLabels = asrResult.map(el => el.prob);
+    let asrTimeStamps = asrResult.map(el => el.timestamp);
+
+
+    console.log(ocrTimeStamps)
+    console.log(asrTimeStamps)
+    currentTimeStampIndex = 0;
+    updateGraphOCR(ocrTimeStamps, ocrLabels, "OCRChart"); // map from it
+    updateGraphASR(asrTimeStamps, asrLabels, "ASRChart"); // map from it
+    currentTimestamps = []
+    if (OCRDOM.checked) {
+        console.log("ocr")
+        currentTimestamps = currentTimestamps.concat(ocrTimeStamps);
+    }
+    if (ASRDOM.checked) {
+        console.log("asr")
+        currentTimestamps = currentTimestamps.concat(asrTimeStamps);
+    }
+    console.log(currentTimestamps)
+    currentTimestamps.sort((a, b)=>a-b);
+    console.log(currentTimestamps)
+    moveToMark();
+}
+
 searchBtn.addEventListener("click", () => {
     currentQuery = queryText.value;
     currQueryDOM.innerHTML = currentQuery;
-    Promise.all([getTimeStamps(currentVideoId, currentQuery, "ocr"), getTimeStamps(currentVideoId, currentQuery, "asr")]).then(values => {
-        let ocrResult = values[0];
-        let asrResult = values[0];
-        let ocrTimeStamps = ocrResult.map(el => el.timestamp);
-        let asrTimeStamps = asrResult.map(el => el.timestamp);
-        let ocrLabels = ocrResult.map(el => el.prob);
-        let asrLabels = asrResult.map(el => el.prob);
-
-        currentTimeStampIndex = 0;
-        updateGraph(ocrTimeStamps, ocrLabels, "OCRChart", OCRchart); // map from it
-        updateGraph(asrTimeStamps, asrLabels, "ASRChart", ASRchart); // map from it
-        currentTimestamps = []
-        if (OCRDOM.checked) {
-            currentTimestamps = currentTimestamps.concat(ocrTimeStamps);
-        }
-        if (ASRDOM.checked) {
-            currentTimestamps = currentTimestamps.concat(asrTimeStamps);
-        }
-        moveToMark();
-    })
-    // let ocrResult = await getTimeStamps(currentVideoId, currentQuery, "ocr");
-    // let asrResult = await getTimeStamps(currentVideoId, currentQuery, "asr");
-    
-
-    // let ocrTimeStamps = [23, 56, 200, 320];
-    // let asrTimeStamps = ocrTimeStamps;
-    // let ocrLabels = [0.3, 0.35, 0.5, 0.95];
-    // let asrLabels = ocrTimeStamps;
+    processStamps();
 })
+
 
 prev.addEventListener("click", () => {
     currentTimeStampIndex--;

@@ -7,8 +7,7 @@ async function getRelevantVideos(query) { /// {name, id, desc}
         },
         body: JSON.stringify(query)
     })
-    console.log(jsonData);
-    return await jsonData.json(); 
+    return await jsonData.json();
 }
 
 // {
@@ -24,7 +23,6 @@ async function getTimeStamps(id, query, db) { // {timestamp: ..., prob = ...}
         },
         body: JSON.stringify({id: id, query: query, db: db})
     })
-    console.log(jsonData);
     return await jsonData.json();
 }
 
