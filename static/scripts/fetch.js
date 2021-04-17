@@ -1,22 +1,30 @@
 async function getRelevantVideos(query) { /// {name, id, desc}
-    let jsonData = await fetch("http:://localhost:5000/api/...", { // query
-        method: 'GET',
+    let jsonData = await fetch("api/query", { // query
+        method: 'POST',
         mode: "cors",
         headers: {
             'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify(query)
     })
+    console.log(jsonData);
     return await jsonData.json(); 
 }
 
-async function getTimeStamps(id, query) { // {timestamp: ..., prob = ...}
-    let jsonData = await fetch("http:://localhost:5000/api/...", { // query + id
-        method: 'GET',
+// {
+//     [timestamp: prob, timestamp: prob,timestamp: prob]
+// }
+
+async function getTimeStamps(id, query, db) { // {timestamp: ..., prob = ...}
+    let jsonData = await fetch("get_timestamp", { // query + id
+        method: 'POST',
         mode: "cors",
         headers: {
             'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify({id: id, query: query, db: db})
     })
+    console.log(jsonData);
     return await jsonData.json();
 }
 

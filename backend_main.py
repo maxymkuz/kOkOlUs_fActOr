@@ -3,7 +3,36 @@ from db.db_manipulator import search_db, insert_db
 from db.db_initialization import init_table_asr, init_table_ocr
 from db.tokenizer import tokenize_word
 from backend.write_to_db import json_to_db
+import json
+import matplotlib.pyplot as plt
+from scipy import stats
+import json
+from math import log
 
+
+def get_total_pdf(dct, length):
+    pdfs = []
+    for idxs in dct.values():
+       pdfs.append(get_token_pdf(idxs, length))
+    return [sum([x[i] for x in pdfs]) for i in range(length)]
+
+
+def get_token_pdf(idxs, length):
+    norms = [stats.norm(float(i), 1) for i in idxs]
+    return sum([x.pdf(range(length)) for x in norms])
+
+
+def get_top_n(pdf, length, n=10):
+    top = sorted(range(length), key=lambda x: pdf[x], reverse=True)
+    top = top[:n]
+    return list(zip(top, [pdf[x] for x in top]))
+
+
+# with open("tst.json") as f:
+#     s = json.load(f)
+#
+# total = [log(x + 1e-20) for x in get_total_pdf(s, 600)]
+# print(get_top_n(total, 600, 10))
 
 def tokenize_full_text(connection, cursor, array):
     for i in range(len(array)):
@@ -44,7 +73,7 @@ def find_db(connection, cursor, query, db="asr"):
                     result_dict[word].append(timestamps[i])
         ranked_videos.append([rank, url, title, result_dict])
 
-        print(result_dict)
+        # print(result_dict)
 
         # dictionary = {k.replace("'", ""): v for k, v in [part.split(":") for part in
         #                                                  tsv.split()]}
@@ -65,6 +94,8 @@ def main():
 
     search_result = find_db(connection, cursor, "binary search", db="asr")
     print(search_result)
+    with open("data_file.json", "w") as write_file:
+        json.dump(search_result, write_file)
 
 
 if __name__ == '__main__':
