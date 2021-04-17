@@ -1,5 +1,5 @@
 async function getRelevantVideos(query) { /// {name, id, desc}
-    let jsonData = await fetch("http:://localhost:5000/api/...", { // query
+    let jsonData = await fetch("http:://localhost:5000/api/query", { // query
         method: 'POST',
         mode: "cors",
         headers: {

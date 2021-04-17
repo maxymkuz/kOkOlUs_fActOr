@@ -81,7 +81,6 @@ viewBtn.addEventListener("click", () => {
 searchBtn.addEventListener("click", () => {
     currentQuery = queryText.value;
     currQueryDOM.innerHTML = currentQuery;
-    console.log("g");
     // let ocrResult = await getTimeStamps(currentVideoId, currentQuery, "ocr");
     // let asrResult = await getTimeStamps(currentVideoId, currentQuery, "asr");
     
